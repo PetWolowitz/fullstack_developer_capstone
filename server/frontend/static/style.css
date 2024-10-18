@@ -2,16 +2,36 @@ img{
   width: 60%;
   align-self: center;
 }
-
-.card{
-  border: rgb(103, 102, 105) 3px solid;
-  display: flex;  
-  flex-direction: column;
-  margin-left:5%;
-  margin-right:5%;
-  margin-top: 1%;
-  margin-bottom: 1%;
+.card {
+  width: 80%;
+  margin: auto;
+  margin-top: 5%;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
 }
+
+.card img {
+  border-radius: 10px;
+}
+
+.card .contact-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.card .contact-section div {
+  flex-basis: 25%;
+  text-align: center;
+}
+
+.card .contact-section .separator {
+  border-left: 1px solid gray;
+  height: 150px;
+  margin: 0 20px;
+}
+
 
 .row{
   display: flex;  
@@ -33,6 +53,16 @@ img{
 }
 
 .title{
+  font-size: 20px;
+  background-color: rgb(97, 64, 128);
+  color: white;
+  text-align: center;
+  margin:20px;
+  padding:5px;
+  
+}
+
+.titleCustom{
   font-size: 20px;
   background-color: rgb(97, 64, 128);
   color: white;
@@ -117,10 +147,11 @@ img{
 
 .img_icon {
   align-self: center;
-    width:40px;
-    background-color:#0C9;
+    width:50px;
+   
     color:#FFF;
     border-radius:50px;
     text-align:center;
-    box-shadow: 2px 2px 3px #999;  
+      
 }
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <title>Contact Us</title>
+    <script>
+
+        const logout = async (e) => {
+        //Include the code for logout here.
+        };
+        
+        let checkSession = ()=>{
+          let curr_user = sessionStorage.getItem("username");
+        
+          if (curr_user && curr_user !== "") {
+            document.getElementById("loginlogout").innerHTML = 
+            '<span class="homepage_links">' + curr_user +'</span>' +
+            '<a class="homepage_links" onclick="logout()" href="/">Logout</a>'
+          } else {
+            document.getElementById("loginlogout").innerHTML = 
+            '<a class="homepage_links" href="/login">Login</a>'+
+            '<a class="homepage_links"  href="/register">Register</a>'
+          }
+         }
+        </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(34, 148, 241, 0.932); height: 1in;">
+        <div class="container-fluid">
+            <img class="img_icon" src="/static/icona_Nav.png" alt="icona_Nav">
+            <h2 class ="navbar-brand mx-3 text-white" style="padding-right: 5%;">Dealerships</h2>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" style="font-size: larger;" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white " style="font-size: larger;" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" style="font-size: larger;" href="/contact">Contact Us</a>
+                    </li>
+                </ul>
+                <span class="navbar-text">
+                    <div class="loginlink" id="loginlogout">
+                    </div>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="card" style="width: 80%; margin: auto; margin-top: 25px;">
+        <div class="card-body" style="display: flex; flex-wrap: wrap; justify-content: space-around; padding: 20px;">
+            <!-- Quadrante 1: Immagine del garage -->
+            <div style="flex-basis: 45%; margin-bottom: 50px;">
+                <img class="img_icon img-fluid mt-5 shadow" src="/static/cars.jpeg" alt="Garage Image" style="width: 100%;">
+            </div>
+            
+            <!-- Quadrante 2: Titolo "Customer Service" -->
+            <div style="flex-basis: 45%; margin-top: 10px; text-align: center;">
+                <h3 class="card-title title mb-3 shadow">Customer Service:</h3>
+                <p class="card-text mt-5 ">We are happy to help you with any questions you may have.</p>
+                <p class="card-text mb-5 ">Please feel free to contact us at any time.</p>
+            </div>
+            
+            <!-- Quadrante 3: Immagine Call Center -->
+            <div style="flex-basis: 45%; margin-top: 50px;">
+                <img class="img_icon img-fluid mb-5 shadow" src="/static/callcenter.png" alt="Call Center" style="width: 65%;">
+            </div>
+             <div style="border-left: 1px solid gray; height: 150px; margin: 0 20px;"></div>
+            <!-- Quadrante 4: Contatti numerici ed email -->
+            <div style="flex-basis: 45%; margin-bottom: 70px;  text-align: center;">
+                
+                <h3 class="card-title title shadow mb-5">Contact Us:</h3>
+                
+                <p class="card-text">support@bestcars.com</p>
+                <p class="card-text text-decoration-underline ">Contact our National Advertising team:</p>
+                <p class="card-text ">NationalSales@bestcars.com</p>
+                <p class="card-text text-decoration-underline ">Contact our Public Relations team:</p>
+                <p class="card-text">PR@bestcars.com</p>
+                <p class="card-text">312-611-1111</p>
+                <p class="card-text display-6">Visit <a href="https://growwithbestcars.com">growwithbestcars.com</a></p>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
