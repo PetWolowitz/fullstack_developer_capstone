@@ -1,65 +1,80 @@
-.register_container{
+.register_container {
   display: flex;
   flex-direction: column;
   margin: auto;
   margin-top: 2%;
-  background-color: darkturquoise;
+  background-color: #007bff; /* Azzurro simile a quello che hai indicato */
   min-width: 350px;
-  width: 30%;
+  width: 40%; /* Aumentato un po' la larghezza per renderlo più centrato */
+  border-radius: 20px; /* Bordi arrotondati */
+  padding: 30px; /* Spazio interno per un layout più arioso */
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Leggera ombra */
 }
 
-.inputs{
+.inputs {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 15px; /* Aumentato lo spazio tra le sezioni */
 }
 
-.input{
+.input {
   display: flex;
-  flex-direction:row;
+  flex-direction: row;
   align-items: center;
 }
 
-.input_field{
-  height:40px;
-  width:200px;
-  margin:.5cm;
+.input_field {
+  height: 40px;
+  width: 250px; /* Aumentata la larghezza */
+  margin: 0.5cm;
   font-size: medium;
+  border: none;
+  border-radius: 10px; /* Bordi arrotondati per i campi input */
+  padding: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1); /* Leggera ombra sugli input */
 }
 
-.submit_panel{
+.submit_panel {
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   margin-top: 5%;
   margin-bottom: 5%;
 }
 
-.submit{
+.submit {
   margin-left: 30%;
   margin-right: 30%;
   cursor: pointer;
   font-size: large;
-  color: rgb(97, 64, 128);
-  border-radius: 10px;
-  height:50px;
+  color: #fff;
+  background-color: #8A2BE2; /* Bottone viola */
+  border-radius: 25px;
+  height: 50px;
+  border: none;
+  padding: 10px;
+  text-align: center;
 }
 
 .submit:hover {
-  background-color: wheat;
+  background-color: wheat; /* Cambia colore al passaggio del mouse */
 }
 
-.header{
-  font: 4em sans-serif;
+.header {
+  font-size: 2.5em;
   color: white;
-  margin: .5cm;
+  margin: 0.5cm;
+  text-align: center;
 }
 
-.img_icon{
-  width:40px;
-  margin:.1cm;
-  background-color:#0C9;
-  color:#FFF;
-  border-radius:50px;
-  text-align:center;
-  box-shadow: 2px 2px 3px #999;  
+.img_icon {
+  width: 50px; /* Icone più grandi */
+  height: 50px;
+  margin: 0.1cm;
+  background-color: #007bff; /* Icone azzurre */
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 5px #999;
+  filter: brightness(1.2); /* Maggior contrasto per le icone */
 }

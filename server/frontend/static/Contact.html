@@ -7,25 +7,25 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <title>Contact Us</title>
     <script>
-
+        
         const logout = async (e) => {
-        //Include the code for logout here.
+            //Include the code for logout here.
         };
         
         let checkSession = ()=>{
-          let curr_user = sessionStorage.getItem("username");
-        
-          if (curr_user && curr_user !== "") {
-            document.getElementById("loginlogout").innerHTML = 
-            '<span class="homepage_links">' + curr_user +'</span>' +
-            '<a class="homepage_links" onclick="logout()" href="/">Logout</a>'
-          } else {
-            document.getElementById("loginlogout").innerHTML = 
-            '<a class="homepage_links" href="/login">Login</a>'+
-            '<a class="homepage_links"  href="/register">Register</a>'
-          }
-         }
-        </script>
+            let curr_user = sessionStorage.getItem("username");
+            
+            if (curr_user && curr_user !== "") {
+                document.getElementById("loginlogout").innerHTML = 
+                '<span class="homepage_links">' + curr_user +'</span>' +
+                '<a class="homepage_links" onclick="logout()" href="/">Logout</a>'
+            } else {
+                document.getElementById("loginlogout").innerHTML = 
+                '<a class="homepage_links" href="/login">Login</a>'+
+                '<a class="homepage_links"  href="/register">Register</a>'
+            }
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(34, 148, 241, 0.932); height: 1in;">
@@ -70,10 +70,10 @@
             </div>
             
             <!-- Quadrante 3: Immagine Call Center -->
-            <div style="flex-basis: 45%; margin-top: 50px;">
+            <div style="flex-basis: 45%; margin-top: 50px; margin:auto;">
                 <img class="img_icon img-fluid mb-5 shadow" src="/static/callcenter.png" alt="Call Center" style="width: 65%;">
             </div>
-             <div style="border-left: 1px solid gray; height: 150px; margin: 0 20px;"></div>
+            <div style="border-left: 1px solid gray; height: 150px; margin: 0 20px;"></div>
             <!-- Quadrante 4: Contatti numerici ed email -->
             <div style="flex-basis: 45%; margin-bottom: 70px;  text-align: center;">
                 
