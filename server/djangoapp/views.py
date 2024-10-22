@@ -8,26 +8,27 @@ from datetime import datetime
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
+from .models import CarMake, CarModel
 from .populate import initiate
 
-# Get an instance of a logger
+# Ottieni un'istanza di un logger
 logger = logging.getLogger(__name__)
 
-# Create your views here.
+# Crea le tue viste qui.
 
-# Create a `login_request` view to handle sign in request
+# Vista per gestire la richiesta di login
 @csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        # Get username and password from request body
+        # Ottieni username e password dal corpo della richiesta
         data = json.loads(request.body)
         username = data.get('userName')
         password = data.get('password')
-        # Try to check if provided credential can be authenticated
+        # Prova ad autenticare le credenziali fornite
         user = authenticate(username=username, password=password)
         response_data = {"userName": username}
         if user is not None:
-            # If user is valid, call login method to login current user
+            # Se l'utente è valido, effettua il login
             login(request, user)
             response_data["status"] = "Authenticated"
         else:
@@ -37,7 +38,7 @@ def login_user(request):
     else:
         return JsonResponse({"status": "Failed", "message": "Invalid request method"})
 
-# Create a `logout_request` view to handle sign out request
+# Vista per gestire la richiesta di logout
 @csrf_exempt
 def logout_request(request):
     if request.method == 'POST':
@@ -46,10 +47,7 @@ def logout_request(request):
     else:
         return JsonResponse({"status": "Failed", "message": "Invalid request method"})
 
-# Create a `registration` view to handle sign up request
-@csrf_exempt
-@csrf_exempt
-@csrf_exempt
+# Vista per gestire la richiesta di registrazione
 @csrf_exempt
 def registration(request):
     context = {}  # Questo crea un dizionario vuoto che può essere usato più avanti
@@ -69,7 +67,13 @@ def registration(request):
             logger.debug("{} is a new user".format(username))
 
         if not username_exist:
-            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, password=password, email=email)
+            user = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                password=password,
+                email=email
+            )
             login(request, user)
             context["userName"] = username
             context["status"] = "Authenticated"
@@ -82,3 +86,23 @@ def registration(request):
         context["status"] = "Failed"
         context["message"] = "Invalid request method"
         return JsonResponse(context)
+
+# Vista per ottenere la lista delle auto
+# views.py
+
+def get_cars(request):
+    car_model_count = CarModel.objects.count()
+    print(f"CarModel count: {car_model_count}")
+    if car_model_count == 0:
+        initiate()
+    car_models = CarModel.objects.select_related('make')
+    cars = []
+    for car_model in car_models:
+        cars.append({
+            "CarModel": car_model.name,
+            "CarMake": car_model.make.name,
+            "DealerId": car_model.dealer_id,
+            "CarType": car_model.car_type,
+            "Year": car_model.year,
+        })
+    return JsonResponse({"CarModels": cars})
