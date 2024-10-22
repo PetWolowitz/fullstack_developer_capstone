@@ -8,27 +8,24 @@ from datetime import datetime
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from .models import CarMake, CarModel
 from .populate import initiate
+from .restapis import get_request, analyze_review_sentiments, post_review
 
 # Ottieni un'istanza di un logger
 logger = logging.getLogger(__name__)
-
-# Crea le tue viste qui.
 
 # Vista per gestire la richiesta di login
 @csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        # Ottieni username e password dal corpo della richiesta
         data = json.loads(request.body)
         username = data.get('userName')
         password = data.get('password')
-        # Prova ad autenticare le credenziali fornite
         user = authenticate(username=username, password=password)
         response_data = {"userName": username}
         if user is not None:
-            # Se l'utente è valido, effettua il login
             login(request, user)
             response_data["status"] = "Authenticated"
         else:
@@ -50,7 +47,7 @@ def logout_request(request):
 # Vista per gestire la richiesta di registrazione
 @csrf_exempt
 def registration(request):
-    context = {}  # Questo crea un dizionario vuoto che può essere usato più avanti
+    context = {}
     if request.method == 'POST':
         data = json.loads(request.body)
         username = data['userName']
@@ -88,8 +85,6 @@ def registration(request):
         return JsonResponse(context)
 
 # Vista per ottenere la lista delle auto
-# views.py
-
 def get_cars(request):
     car_model_count = CarModel.objects.count()
     print(f"CarModel count: {car_model_count}")
@@ -106,3 +101,47 @@ def get_cars(request):
             "Year": car_model.year,
         })
     return JsonResponse({"CarModels": cars})
+
+# Vista per ottenere la lista dei concessionari
+def get_dealerships(request, state="All"):
+    if state == "All":
+        endpoint = "/fetchDealers"
+    else:
+        endpoint = "/fetchDealers/" + state
+    dealerships = get_request(endpoint)
+    return JsonResponse({"status": 200, "dealers": dealerships})
+
+# Vista per ottenere le recensioni di un concessionario
+def get_dealer_reviews(request, dealer_id):
+    if dealer_id:
+        endpoint = "/fetchReviews/dealer/" + str(dealer_id)
+        reviews = get_request(endpoint)
+        for review_detail in reviews:
+            response = analyze_review_sentiments(review_detail['review'])
+            print(response)
+            review_detail['sentiment'] = response['sentiment']
+        return JsonResponse({"status": 200, "reviews": reviews})
+    else:
+        return JsonResponse({"status": 400, "message": "Bad Request"})
+
+# Vista per inviare una recensione per un concessionario
+@login_required
+def add_review(request):
+    if request.method == 'POST':
+        # Controlla se l'utente è autenticato
+        if not request.user.is_authenticated:
+            return JsonResponse({"status": 403, "message": "Unauthorized"})
+
+        # Estrai i dati della recensione dal corpo della richiesta
+        try:
+            data = json.loads(request.body)
+            # Invoca la funzione post_review per inviare la recensione
+            response = post_review(data)
+            if response:
+                return JsonResponse({"status": 200, "message": "Review added successfully"})
+            else:
+                return JsonResponse({"status": 500, "message": "Error in posting review"})
+        except Exception as e:
+            return JsonResponse({"status": 400, "message": "Bad Request", "error": str(e)})
+    else:
+        return JsonResponse({"status": 400, "message": "Invalid request method"})

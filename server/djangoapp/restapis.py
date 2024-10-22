@@ -34,10 +34,49 @@ def get_request(endpoint, **kwargs):
         return None
 
 # Funzione per analizzare i sentimenti delle recensioni
-# def analyze_review_sentiments(text):
-#     request_url = sentiment_analyzer_url + "analyze/" + text
-#     # Aggiungi qui il codice per richiamare il servizio di analisi dei sentimenti
+def analyze_review_sentiments(text):
+    request_url = sentiment_analyzer_url + "analyze/" + text
+    print(f"GET from {request_url}")
+    try:
+        # Esegui la richiesta GET usando la libreria requests
+        response = requests.get(request_url)
+        # Verifica se la richiesta ha avuto successo
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Errore nella richiesta: {response.status_code}")
+            return None
+    except Exception as err:
+        # Gestione degli errori di rete
+        print(f"Unexpected {err=}, {type(err)=}")
+        print("Network exception occurred")
+        return None
 
 # Funzione per inviare una recensione tramite una richiesta POST
-# def post_review(data_dict):
-#     # Aggiungi qui il codice per inviare una recensione al backend tramite POST
+def post_review(data_dict):
+    request_url = backend_url + "add_review"
+    try:
+        # Esegui la richiesta POST usando la libreria requests
+        response = requests.post(request_url, json=data_dict)
+        # Verifica se la richiesta ha avuto successo
+        if response.status_code == 201:
+            return response.json()
+        else:
+            print(f"Errore nella richiesta POST: {response.status_code}")
+            return None
+    except Exception as err:
+        # Gestione degli errori di rete
+        print(f"Unexpected {err=}, {type(err)=}")
+        print("Network exception occurred")
+        return None
+
+#Funzione per inviare la recensione al backend
+def post_review(data_dict):
+    request_url = backend_url + "/insert_review"
+    try:
+        response = requests.post(request_url, json=data_dict)
+        print(response.json())
+        return response.json()
+    except Exception as e:
+        print(f"Network exception occurred: {e}")
+        return None
