@@ -107,10 +107,11 @@ def get_dealerships(request, state="All"):
     if state == "All":
         endpoint = "/fetchDealers"
     else:
-        endpoint = "/fetchDealers/" + state
-    dealerships = get_request(endpoint)
+        endpoint = f"/fetchDealers/{state}"
+    
+    dealerships = get_request(endpoint)  # Assicurati che la funzione get_request funzioni correttamente
     return JsonResponse({"status": 200, "dealers": dealerships})
-
+    
 # Vista per ottenere le recensioni di un concessionario
 def get_dealer_reviews(request, dealer_id):
     if dealer_id:
@@ -145,3 +146,11 @@ def add_review(request):
             return JsonResponse({"status": 400, "message": "Bad Request", "error": str(e)})
     else:
         return JsonResponse({"status": 400, "message": "Invalid request method"})
+
+
+def post_review(request, dealer_id):
+    if request.method == 'POST':
+        # Gestisci la logica per postare la recensione qui
+        return JsonResponse({"status": "Review added successfully"})
+    else:
+        return JsonResponse({"status": "Failed", "message": "Invalid request method"})
