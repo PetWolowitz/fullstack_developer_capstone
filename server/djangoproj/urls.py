@@ -9,8 +9,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name="Home.html"), name='home'),
     path('login/', TemplateView.as_view(template_name="index.html")),  # Punto di ingresso per la pagina di login
-    path('register/', TemplateView.as_view(template_name="index.html")),  # Punto di ingresso per la pagina di registrazione
+    path('register/', TemplateView.as_view(template_name="index.html")),
+  # Punto di ingresso per la pagina di registrazione
     path('about/', TemplateView.as_view(template_name="About.html"), name='about'),
     path('contact/', TemplateView.as_view(template_name="Contact.html"), name='contact'),
-    path('', include('djangoapp.urls')),
+    path('dealers/', TemplateView.as_view(template_name="index.html")),
+    path('dealer/<int:dealer_id>',TemplateView.as_view(template_name="index.html")),
+    path('postreview/<int:dealer_id>',TemplateView.as_view(template_name="index.html")),
+    
+    path('djangoapp/', include('djangoapp.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -12,10 +12,19 @@ from django.contrib.auth.decorators import login_required
 from .models import CarMake, CarModel
 from .populate import initiate
 from .restapis import get_request, analyze_review_sentiments, post_review
+import requests
 
 # Ottieni un'istanza di un logger
 logger = logging.getLogger(__name__)
-
+def get_request(endpoint):
+    try:
+        url = "http://localhost:3030" + endpoint  # Assicurati che l'URL sia corretto
+        response = requests.get(url)
+        response.raise_for_status()  # Verifica se c'è qualche errore HTTP
+        return response.json()  # Assumi che la risposta sia in formato JSON
+    except requests.exceptions.RequestException as e:
+        print(f"Errore nella richiesta GET: {e}")
+        return None  # O gestisci meglio l'errore
 # Vista per gestire la richiesta di login
 @csrf_exempt
 def login_user(request):
@@ -102,6 +111,16 @@ def get_cars(request):
         })
     return JsonResponse({"CarModels": cars})
 
+
+def get_dealer_detail(request, dealer_id):
+    # Qui puoi gestire la logica per recuperare i dettagli del concessionario
+    dealer = {"id": dealer_id, "name": "Nome del concessionario", "location": "Località"}  # Dati esempio
+    return JsonResponse({"dealer": dealer})
+
+def get_dealer_detail_by_id(request, dealer_id):
+    # Qui puoi gestire la logica per recuperare i dettagli del concessionario   
+    return get_dealer_detail(request, dealer_id)
+
 # Vista per ottenere la lista dei concessionari
 def get_dealerships(request, state="All"):
     if state == "All":
@@ -117,40 +136,45 @@ def get_dealer_reviews(request, dealer_id):
     if dealer_id:
         endpoint = "/fetchReviews/dealer/" + str(dealer_id)
         reviews = get_request(endpoint)
+        if reviews is None:  # Se la richiesta non ha avuto successo
+            return JsonResponse({"status": 500, "message": "Errore nel recupero delle recensioni"})
+        
         for review_detail in reviews:
             response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
+            if response and 'sentiment' in response:
+                review_detail['sentiment'] = response['sentiment']
+            else:
+                review_detail['sentiment'] = 'unknown'  # Fallback se qualcosa va storto
+
         return JsonResponse({"status": 200, "reviews": reviews})
     else:
         return JsonResponse({"status": 400, "message": "Bad Request"})
 
-# Vista per inviare una recensione per un concessionario
 @login_required
-def add_review(request):
+def add_review(request, dealer_id):
     if request.method == 'POST':
-        # Controlla se l'utente è autenticato
-        if not request.user.is_authenticated:
-            return JsonResponse({"status": 403, "message": "Unauthorized"})
-
-        # Estrai i dati della recensione dal corpo della richiesta
         try:
             data = json.loads(request.body)
-            # Invoca la funzione post_review per inviare la recensione
-            response = post_review(data)
-            if response:
-                return JsonResponse({"status": 200, "message": "Review added successfully"})
-            else:
-                return JsonResponse({"status": 500, "message": "Error in posting review"})
+            # Invoca la funzione per gestire la recensione
+            response = post_review(data, dealer_id)
+            return JsonResponse({"status": "success", "message": "Review added successfully"})
         except Exception as e:
-            return JsonResponse({"status": 400, "message": "Bad Request", "error": str(e)})
-    else:
-        return JsonResponse({"status": 400, "message": "Invalid request method"})
-
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
 def post_review(request, dealer_id):
-    if request.method == 'POST':
-        # Gestisci la logica per postare la recensione qui
-        return JsonResponse({"status": "Review added successfully"})
+    if request.method == "POST":
+        # Estrai i dati dalla richiesta POST
+        review = request.POST.get('review')
+        
+        # Usa dealer_id per fare qualcosa, ad esempio salvarlo nel database o associarlo alla recensione.
+        result = {
+            'dealer_id': dealer_id,
+            'review': review,
+        }
+        
+        # Logica di salvataggio o di elaborazione della recensione
+        
+        return JsonResponse({'status': 200, 'message': 'Review posted successfully!', 'result': result})
     else:
-        return JsonResponse({"status": "Failed", "message": "Invalid request method"})
+        return render(request, 'add_review.html', {"dealer_id": dealer_id})

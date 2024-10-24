@@ -53,23 +53,23 @@ def analyze_review_sentiments(text):
         return None
 
 # Funzione per inviare una recensione tramite una richiesta POST
-def post_review(data_dict):
-    request_url = backend_url + "add_review"
-    try:
-        # Esegui la richiesta POST usando la libreria requests
-        response = requests.post(request_url, json=data_dict)
-        # Verifica se la richiesta ha avuto successo
-        if response.status_code == 201:
-            return response.json()
-        else:
-            print(f"Errore nella richiesta POST: {response.status_code}")
-            return None
-    except Exception as err:
-        # Gestione degli errori di rete
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
-        return None
+import requests
 
+# Funzione per inviare la recensione al backend
+def post_review(request, dealer_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            data['dealership'] = dealer_id  # Associa il dealer_id al form di recensione
+            response = post_review(data)  # Posta la recensione
+            if response:
+                return JsonResponse({"status": 200, "message": "Review added successfully"})
+            else:
+                return JsonResponse({"status": 500, "message": "Error in posting review"})
+        except Exception as e:
+            return JsonResponse({"status": 400, "message": "Bad Request", "error": str(e)})
+    else:
+        return JsonResponse({"status": 400, "message": "Invalid request method"})
 #Funzione per inviare la recensione al backend
 def post_review(data_dict):
     request_url = backend_url + "/insert_review"

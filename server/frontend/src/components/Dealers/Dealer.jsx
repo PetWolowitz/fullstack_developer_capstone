@@ -1,128 +1,71 @@
-// src/components/Dealers/Dealer.jsx
+// frontend/src/components/Dealers/Dealer.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import "./Dealers.css";
-import "../assets/style.css";
-import positive_icon from "../assets/positive.png";
-import neutral_icon from "../assets/neutral.png";
-import negative_icon from "../assets/negative.png";
-import review_icon from "../assets/reviewbutton.png";
-import Header from '../Header/Header';
+import Header from '../Header/Header';  // Se hai un componente Header
+import review_icon from '../assets/reviewbutton.png';  // Importa un'icona di recensione
 
 const Dealer = () => {
   const [dealer, setDealer] = useState({});
   const [reviews, setReviews] = useState([]);
   const [unreviewed, setUnreviewed] = useState(false);
-  const [postReview, setPostReview] = useState(<></>);
+  const { id } = useParams();  // Ottieni l'ID del dealer dai parametri URL
+  const dealer_url = `/djangoapp/dealer/${id}`;
+  const reviews_url = `/djangoapp/reviews/dealer/${id}`;
 
-  let curr_url = window.location.href;
-  let root_url = curr_url.substring(0, curr_url.indexOf("dealer"));
-  let params = useParams();
-  let id = params.id;
-  let dealer_url = `${root_url}djangoapp/dealer/${id}`;
-  let reviews_url = `${root_url}djangoapp/reviews/dealer/${id}`;
-  let post_review_url = `${root_url}postreview/${id}`;
+  useEffect(() => {
 
-  const get_dealer = async () => {
-    console.log("Fetching dealer data...");
-    const res = await fetch(dealer_url, {
-      method: "GET",
-    });
-    console.log("Response received:", res);
+    
 
-    if (!res.ok) {
-      console.error("Error fetching dealer:", res.statusText);
-      return;
-    }
+    // Funzione per ottenere i dettagli del dealer
+    const getDealer = async () => {
+      const res = await fetch(dealer_url);
+      const data = await res.json();
+      if (data.status === 200) {
+        setDealer(data.dealer);
+      }
+    };
 
-    const retobj = await res.json();
-    console.log("Dealer data:", retobj);
-
-    if (retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer);
-      setDealer(dealerobjs[0]);
-    }
-  };
-
-  const get_reviews = async () => {
-    console.log("Fetching reviews...");
-    const res = await fetch(reviews_url, {
-      method: "GET",
-    });
-    console.log("Response received:", res);
-
-    if (!res.ok) {
-      console.error("Error fetching reviews:", res.statusText);
-      return;
-    }
-
-    const retobj = await res.json();
-    console.log("Reviews data:", retobj);
-
-    if (retobj.status === 200) {
-      if (retobj.reviews.length > 0) {
-        setReviews(retobj.reviews);
+    // Funzione per ottenere le recensioni del dealer
+    const getReviews = async () => {
+      const res = await fetch(reviews_url);
+      const data = await res.json();
+      if (data.status === 200 && data.reviews.length > 0) {
+        setReviews(data.reviews);
       } else {
         setUnreviewed(true);
       }
-    }
-  };
+    };
 
-  const senti_icon = (sentiment) => {
-    let icon =
-      sentiment === "positive"
-        ? positive_icon
-        : sentiment === "negative"
-        ? negative_icon
-        : neutral_icon;
-    return icon;
-  };
-
-  useEffect(() => {
-    get_dealer();
-    get_reviews();
-    if (sessionStorage.getItem("username")) {
-      setPostReview(
-        <a href={post_review_url}>
-          <img
-            src={review_icon}
-            style={{ width: "50px", marginLeft: "15px", cursor: "pointer" }}
-            alt="Post Review"
-          />
-        </a>
-      );
-    }
-  }, []); 
+    getDealer();
+    getReviews();
+  }, [id]);
 
   return (
-    <div style={{ margin: "20px" }}>
+    <div>
       <Header />
-      <div style={{ marginTop: "10px" }}>
-        <h1 style={{ color: "grey" }}>
-          {dealer.full_name}
-          {postReview}
-        </h1>
-        <h4 style={{ color: "grey" }}>
-          {dealer.city}, {dealer.address}, {dealer.zip}, {dealer.state}
-        </h4>
-      </div>
-      <div className="reviews_panel">
-        {reviews.length === 0 && unreviewed === false ? (
-          <p>Loading Reviews....</p>
-        ) : unreviewed === true ? (
-          <div>No reviews yet!</div>
-        ) : (
-          reviews.map((review) => (
-            <div className="review_panel" key={review.name}>
-              <img src={senti_icon(review.sentiment)} className="emotion_icon" alt="Sentiment" />
-              <div className="review">{review.review}</div>
-              <div className="reviewer">
-                {review.name} {review.car_make} {review.car_model} {review.car_year}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      <h1>{dealer.full_name}</h1>
+      <p>{dealer.city}, {dealer.state}</p>
+
+      {reviews.length === 0 && unreviewed === false ? (
+        <p>Loading reviews...</p>
+      ) : unreviewed ? (
+        <p>No reviews yet!</p>
+      ) : (
+        reviews.map(review => (
+          <div key={review.id}>
+            <p>{review.review}</p>
+            <p>{review.name} - {review.car_make} {review.car_model} ({review.car_year})</p>
+          </div>
+        ))
+      )}
+
+      {/* Mostra il bottone per aggiungere una recensione */}
+      {sessionStorage.getItem("username") && (
+        <a href={`/postreview/${id}`}>
+          <img src={review_icon} alt="Post Review" style={{ width: '200px', cursor: 'pointer', height: '100px', margin: '10px' , marginBottom: '10px', marginTop: '10px', marginLeft: '35px', borderRadius: '20px', boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.5)' }} />
+        </a>
+      )}
     </div>
   );
 };

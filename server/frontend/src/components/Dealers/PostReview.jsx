@@ -17,11 +17,12 @@ const PostReview = () => {
   let root_url = curr_url.substring(0, curr_url.indexOf("postreview"));
   let params = useParams();
   let id = params.id;
-  let dealer_url = root_url + `djangoapp/dealer/${id}`;
-  let review_url = root_url + `djangoapp/add_review`;
-  let carmodels_url = root_url + `djangoapp/get_cars`;
+  let dealer_url = `${root_url}djangoapp/dealer/${id}`; 
+  let review_url = `${root_url}djangoapp/add_review/${id}`;
 
-  const postreview = async () => {
+  let carmodels_url =  root_url + `djangoapp/get_cars/`;
+
+  const post_review = async () => {
     let name = sessionStorage.getItem("firstname") + " " + sessionStorage.getItem("lastname");
     if (name.includes("null")) {
       name = sessionStorage.getItem("username");
@@ -30,14 +31,14 @@ const PostReview = () => {
       alert("All details are mandatory");
       return;
     }
-
+  
     let model_split = model.split(" ");
     let make_chosen = model_split[0];
     let model_chosen = model_split[1];
-
+  
     let jsoninput = JSON.stringify({
       "name": name,
-      "dealership": id,
+      "dealership": id,  // Associa il dealer_id
       "review": review,
       "purchase": true,
       "purchase_date": date,
@@ -45,21 +46,21 @@ const PostReview = () => {
       "car_model": model_chosen,
       "car_year": year,
     });
-
-    console.log(jsoninput);
-    const res = await fetch(review_url, {
+  
+    const res = await fetch(`/djangoapp/add_review/${id}/`, {  // Passa il dealer_id nell'URL
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: jsoninput,
     });
-
+  
     const json = await res.json();
     if (json.status === 200) {
       window.location.href = window.location.origin + "/dealer/" + id;
     }
-  };
+  }
+  
 
   const get_dealer = async () => {
     const res = await fetch(dealer_url, {
@@ -138,11 +139,11 @@ const PostReview = () => {
           />
         </div>
 
-        <div style={{ marginTop: "20px" }}>
+        <div style={{ marginTop: "20px" , textAlign: "center", alignSelf: "center", justifyContent: "center", alignContent: "center", justifyItems: "center", marginLeft: "auto", marginRight: "auto"}}>
           <button
             className='postreview'
-            onClick={postreview}
-            style={{ padding: "10px 20px", fontSize: "16px", borderRadius: "8px", backgroundColor: "#28a745", color: "white", border: "none" }}
+            onClick={post_review}
+            style={{ padding: "10px 20px", fontSize: "50px", borderRadius: "8px", backgroundColor: "#28a745", color: "white", border: "none" }}
           >
             Post Review
           </button>

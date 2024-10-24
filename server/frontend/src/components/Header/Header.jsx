@@ -5,7 +5,7 @@ import "../assets/bootstrap.min.css";
 const Header = () => {
   const logout = async (e) => {
     e.preventDefault();
-    let logout_url = window.location.origin + "/djangoapp/logout";
+    let logout_url = window.location.origin + "/djangoapp/logout/";
     const res = await fetch(logout_url, {
       method: "POST",
       headers: {
